@@ -2,19 +2,19 @@ const mongoose = require("./mongoClient");
 const User = require("./userModel");
 
 describe("UserModel", () => {
-  const existingEmail = "existing.user"+Math.random()+"@test.com";
+  const existingEmail = "existing.user" + Math.random() + "@test.com";
   const existingPassword = "supersecret";
 
   beforeAll(async () => {
     await User.register(existingEmail, existingPassword);
   });
 
-  afterAll(async () => {
-    await mongoose.close();
+  afterAll(() => {
+    mongoose.disconnect();
   });
 
   it('should register new user successfully', async () => {
-    const email = "unique.email+"+Math.random()+"test.com";
+    const email = "unique.email+" + Math.random() + "test.com";
     const pass = "supersecret";
 
     const newUser = await User.register(email, pass);
@@ -27,7 +27,7 @@ describe("UserModel", () => {
   });
 
   it('should not register new user because email already exist', async () => {
-    const email = "unique.email+"+Math.random()+"test.com";
+    const email = "unique.email+" + Math.random() + "test.com";
     const pass = "supersecret";
 
     // first attempt is successful
@@ -38,7 +38,7 @@ describe("UserModel", () => {
     expect(firstAttempt.password).not.toBe(pass);
 
     // second attempt is ending with throws exception
-    await expect(( async () => {
+    await expect((async () => {
       const secondAttempt = await User.register(email, pass);
     })()).rejects.toThrow(mongoose.MongoError);
 
