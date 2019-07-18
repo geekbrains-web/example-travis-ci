@@ -2,6 +2,15 @@ language: node_js
 node_js:
   - "12"
 
+services:
+  - mongodb
+
+before_script:
+  - mongo test_collection --eval 'db.createUser({user:"test",pwd:"test",roles:["readWrite"]});'
+
+env:
+  - CONNECTION=mongodb://test:test@localhost:27017/test_collection
+
 install:
   - npm install
 
